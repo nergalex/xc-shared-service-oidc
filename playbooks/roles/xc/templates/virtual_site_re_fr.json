@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "name": "re-fr",
+    "namespace": "shared",
+    "labels": {
+      "owner": "{{ extra_owner_email.split('@')[0] }}",
+      "project": "cloudbuilder"
+    },
+    "description": "NGINX workshop",
+    "disable": false
+  },
+  "spec": {
+    "site_type": "REGIONAL_EDGE",
+    "site_selector": {
+      "expressions": [
+        "ves.io/siteName in (ves-io-pa2-par, ves-io-pa4-par)"
+      ]
+    }
+  }
+}

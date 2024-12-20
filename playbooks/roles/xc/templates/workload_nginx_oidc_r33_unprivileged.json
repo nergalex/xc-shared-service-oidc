@@ -1,0 +1,237 @@
+{
+  "metadata": {
+    "name": "nginx-oidc-gw",
+    "namespace": "{{ extra_volterra_namespace }}",
+    "labels": {
+      "owner": "{{ extra_owner_email.split('@')[0] }}",
+      "project": "cloudbuilder"
+    },
+    "annotations": {
+      "ves.io/app": "nginx-oidc-gw",
+      "ves.io/workload-flavor": "ves-io-medium"
+    },
+    "description": "NGINX workshop",
+    "disable": false
+  },
+  "spec": {
+    "service": {
+      "num_replicas": 1,
+      "containers": [
+        {
+          "name": "nginx-oidc-gw",
+          "image": {
+            "name": "{{ stats_acr_login_server }}/nginx-oidc:{{ extra_build_name }}",
+            "container_registry": {
+              "tenant": "{{ extra_volterra.tenant.full }}",
+              "namespace": "{{ extra_volterra_namespace }}",
+              "name": "{{ stats_acr_login_server  | replace('.', '-') }}"
+            },
+            "pull_policy": "IMAGE_PULL_POLICY_ALWAYS"
+          },
+          "init_container": false,
+          "flavor": "CONTAINER_FLAVOR_TYPE_MEDIUM",
+          "command": [],
+          "args": []
+        }
+      ],
+      "configuration": {
+          "parameters":
+          [
+            {
+              "file": {
+                "name": "license.jwt",
+                "data": "string:///{{ lookup('file', 'nginx-license.jwt') | b64encode }}",
+                "volume_name": "license",
+                "mount": {
+                  "mode": "VOLUME_MOUNT_READ_ONLY",
+                  "mount_path": "/nginx/etc/nginx/license.jwt",
+                  "sub_path": "license.jwt"
+                }
+              }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_INSTANCE_GROUP",
+                    "value": "{{ extra_volterra_namespace }}"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_TAGS",
+                    "value": "{{ extra_namespace }}"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_SERVER_TOKEN",
+                    "value": "{{ NGINX_AGENT_SERVER_TOKEN }}"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_SERVER_HOST",
+                    "value": "agent.connect.nginx.com"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_TLS_ENABLE",
+                    "value": "true"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_SERVER_GRPCPORT",
+                    "value": "443"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "PATH",
+                    "value": "/nginx/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_CONFIG_DIRS",
+                    "value": "/nginx/etc/nginx:/nginx/usr/share/nginx/modules"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "NGINX_AGENT_LOG_PATH",
+                    "value": "/nginx/var/log/nginx-agent/agent.log"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "XC_API_KEY",
+                    "value": "{{ extra_volterra.token }}"
+                }
+            },
+            {
+                "env_var":
+                {
+                    "name": "XC_TENANT",
+                    "value": "{{ extra_volterra.tenant.short }}"
+                }
+            }
+          ]
+      },
+      "volumes": [
+        {
+          "name": "nginx-zones",
+          "empty_dir": {
+            "size_limit": 0.1,
+            "mount": {
+              "mode": "VOLUME_MOUNT_READ_WRITE",
+              "mount_path": "/nginx-zones"
+            }
+          }
+        },
+        {
+          "name": "nginx-tmp",
+          "empty_dir": {
+            "size_limit": 0.01,
+            "mount": {
+              "mode": "VOLUME_MOUNT_READ_WRITE",
+              "mount_path": "/nginx-tmp"
+            }
+          }
+        },
+        {
+          "name": "nginx-cache",
+          "empty_dir": {
+            "size_limit": 0.1,
+            "mount": {
+              "mode": "VOLUME_MOUNT_READ_WRITE",
+              "mount_path": "/nginx-cache"
+            }
+          }
+        },
+        {
+          "name": "nginx-state",
+          "empty_dir": {
+            "size_limit": 0.01,
+            "mount": {
+              "mode": "VOLUME_MOUNT_READ_WRITE",
+              "mount_path": "/nginx-state"
+            }
+          }
+        },
+        {
+          "name": "nginx",
+          "empty_dir": {
+            "size_limit": 0.01,
+            "mount": {
+              "mode": "VOLUME_MOUNT_READ_WRITE",
+              "mount_path": "/nginx/etc/nginx/"
+            }
+          }
+        }
+      ],
+      "deploy_options": {
+        "deploy_ce_virtual_sites": {
+          "virtual_site": [
+            {
+              "tenant": "{{ extra_volterra.tenant.full }}",
+              "namespace": "{{ extra_volterra_namespace }}",
+              "name": "cloudbuilder-landing-zones",
+              "kind": "virtual_site"
+            }
+          ]
+        }
+      },
+      "advertise_options": {
+        "advertise_in_cluster": {
+          "multi_ports": {
+            "ports": [
+              {
+                "name": "http",
+                "info": {
+                  "port": 8000,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              },
+              {
+                "name": "https",
+                "info": {
+                  "port": 4443,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              },
+              {
+                "name": "http-nginx-api",
+                "info": {
+                  "port": 8080,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              },
+              {
+                "name": "http-nginx-agent-api",
+                "info": {
+                  "port": 8032,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

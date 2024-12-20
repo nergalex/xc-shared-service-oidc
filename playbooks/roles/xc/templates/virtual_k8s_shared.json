@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "name": "{{ extra_volterra_namespace }}",
+    "namespace": "{{ extra_volterra_namespace }}",
+    "labels": {
+      "owner": "{{ extra_owner_email.split('@')[0] }}",
+      "project": "cloudbuilder"
+    },
+    "description": "NGINX workshop",
+    "disable": false
+  },
+  "spec": {
+    "vsite_refs": [
+      {
+        "kind": "virtual_site",
+        "tenant": "{{ extra_volterra.tenant.full }}",
+        "namespace": "shared",
+        "name": "cloudbuilder-landing-zones"
+      }
+    ],
+    "disabled": {}
+  }
+}

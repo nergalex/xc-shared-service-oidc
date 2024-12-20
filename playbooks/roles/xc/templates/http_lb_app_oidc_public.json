@@ -1,0 +1,99 @@
+{
+  "metadata": {
+    "name": "{{ extra_app.name }}-public",
+    "namespace": "{{ extra_volterra_namespace }}",
+    "labels": {
+      "ves.io/app_type": "cloudbuilder",
+      "owner": "{{ extra_owner_email.split('@')[0] }}",
+      "project": "cloudbuilder"
+    },
+    "description": "NGINX workshop",
+    "disable": false
+  },
+  "spec": {
+    "domains": [
+      "{{ extra_app.name }}.{{ extra_app.domain }}"
+    ],
+    "https_auto_cert": {
+      "http_redirect": true,
+      "add_hsts": true,
+      "no_mtls": {},
+      "tls_config": {
+        "default_security": {}
+      },
+      "default_header": {},
+      "enable_path_normalize": {}
+    },
+    "advertise_on_public_default_vip": {},
+    "default_route_pools": [],
+    "routes": [
+      {
+        "simple_route": {
+          "http_method": "ANY",
+          "path": {
+            "prefix": "/"
+          },
+          "origin_pools": [
+              {
+                "pool": {
+                  "tenant": "{{ extra_volterra.tenant.full }}",
+                  "namespace": "{{ extra_volterra_namespace }}",
+                  "name": "shared-services-oidc"
+                },
+                "weight": 1,
+                "priority": 1,
+                "endpoint_subsets": {}
+              }
+          ],
+          "disable_host_rewrite": {},
+          "advanced_options": {
+            "common_hash_policy": {},
+            "priority": "DEFAULT",
+            "endpoint_subsets": {},
+            "disable_prefix_rewrite": {},
+            "request_headers_to_add": [
+              {
+                "name": "X-Forwarded-Proto",
+                "value": "https",
+                "append": false
+              },
+              {
+                "name": "X-Forwarded-Port",
+                "value": "443",
+                "append": false
+              }
+            ],
+            "request_headers_to_remove": [],
+            "response_headers_to_add": [],
+            "response_headers_to_remove": [],
+            "disable_location_add": false,
+            "inherited_waf": {},
+            "disable_spdy": {},
+            "disable_web_socket_config": {},
+            "default_retry_policy": {},
+            "timeout": 30000,
+            "common_buffering": {},
+            "disable_mirroring": {},
+            "retract_cluster": {},
+            "inherited_bot_defense_javascript_injection": {}
+          }
+        }
+      }
+    ],
+    "disable_api_definition": {},
+    "add_location": true,
+    "no_challenge": {},
+    "disable_malicious_user_detection": {},
+    "disable_rate_limit": {},
+    "waf_exclusion_rules": [],
+    "blocked_clients": [],
+    "trusted_clients": [],
+    "ddos_mitigation_rules": [],
+    "service_policies_from_namespace": {},
+    "multi_lb_app": {},
+    "disable_bot_defense": {},
+    "cookie_stickiness": {
+      "name": "xc-session"
+    }
+  }
+}
