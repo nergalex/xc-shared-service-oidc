@@ -61,6 +61,11 @@
                 "name": "X-Forwarded-Port",
                 "value": "443",
                 "append": false
+              },
+              {
+                "name": "x-my-idp",
+                "value": "{{ extra_my_idp }}",
+                "append": false
               }
             ],
             "request_headers_to_remove": [],

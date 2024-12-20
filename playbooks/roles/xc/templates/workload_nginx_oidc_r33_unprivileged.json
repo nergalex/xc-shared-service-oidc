@@ -29,6 +29,34 @@
             "pull_policy": "IMAGE_PULL_POLICY_ALWAYS"
           },
           "init_container": false,
+          "liveness_check": {
+            "http_health_check": {
+              "path": "/livez",
+              "port": {
+                "num": 8000
+              },
+              "host_header": "check.local"
+            },
+            "initial_delay": 0,
+            "timeout": 1,
+            "interval": 10,
+            "healthy_threshold": 1,
+            "unhealthy_threshold": 3
+          },
+          "readiness_check": {
+            "http_health_check": {
+              "path": "/readyz",
+              "port": {
+                "num": 8000
+              },
+              "host_header": "check.local"
+            },
+            "initial_delay": 0,
+            "timeout": 1,
+            "interval": 10,
+            "healthy_threshold": 1,
+            "unhealthy_threshold": 3
+          },
           "flavor": "CONTAINER_FLAVOR_TYPE_MEDIUM",
           "command": [],
           "args": []

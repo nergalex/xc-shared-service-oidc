@@ -11,7 +11,7 @@
   },
   "spec": {
     "http_health_check": {
-      "use_origin_server_name": {},
+      "host_header": "check.local",
       "path": "/healthz",
       "use_http2": false,
       "expected_status_codes": [
