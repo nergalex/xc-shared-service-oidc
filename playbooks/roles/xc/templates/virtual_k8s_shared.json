@@ -15,7 +15,7 @@
         "kind": "virtual_site",
         "tenant": "{{ extra_volterra.tenant.full }}",
         "namespace": "shared",
-        "name": "cloudbuilder-landing-zones"
+        "name": "shared-service-oidc"
       }
     ],
     "disabled": {}

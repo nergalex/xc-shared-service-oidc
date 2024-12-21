@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "cloudbuilder-landing-zones",
+    "name": "shared-service-oidc",
     "namespace": "shared",
     "labels": {
       "owner": "{{ extra_owner_email.split('@')[0] }}",
@@ -10,9 +10,19 @@
     "disable": false
   },
   "spec": {
-    "site_type": "CUSTOMER_EDGE",
-    "site_selector": {
-      "expressions": ["project in (cloudbuilder)"]
-    }
+    {%- if extra_virtual_site == "CE" -%}
+      "site_type": "CUSTOMER_EDGE",
+      "site_selector": {
+        "expressions": ["project in (cloudbuilder)"]
+      }
+    {%- endif -%}
+    {%- if extra_virtual_site == "RE" -%}
+      "site_type": "REGIONAL_EDGE",
+      "site_selector": {
+        "expressions": [
+          "ves.io/siteName in (ves-io-pa2-par, ves-io-pa4-par)"
+        ]
+      }
+    {%- endif -%}
   }
 }

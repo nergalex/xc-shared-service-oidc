@@ -20,18 +20,33 @@
     },
     "advertise_custom": {
       "advertise_where": [
+    {%- if extra_virtual_site == "CE" -%}
         {
           "virtual_site": {
             "network": "SITE_NETWORK_SERVICE",
             "virtual_site": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "cloudbuilder-landing-zones",
+              "name": "shared-service-oidc",
               "kind": "virtual_site"
             }
           },
           "use_default_port": {}
         }
+    {%- endif -%}
+    {%- if extra_virtual_site == "RE" -%}
+        {
+          "vk8s_service": {
+            "virtual_site": {
+              "tenant": "{{ extra_volterra.tenant.full }}",
+              "namespace": "shared",
+              "name": "shared-service-oidc",
+              "kind": "virtual_site"
+            }
+          },
+          "use_default_port": {}
+        }
+    {%- endif -%}
       ]
     },
     "routes": [
@@ -56,7 +71,7 @@
               "pool": {
                 "tenant": "{{ extra_volterra.tenant.full }}",
                 "namespace": "{{ extra_volterra_namespace }}",
-                "name": "demo-oidc-origin",
+                "name": "{{ extra_app.name }}-origin",
                 "kind": "origin_pool"
               },
               "weight": 1,
@@ -65,8 +80,35 @@
             }
           ],
           "disable_host_rewrite": {},
-          "query_params": {
-            "retain_all_params": {}
+          "advanced_options": {
+            "common_hash_policy": {},
+            "priority": "DEFAULT",
+            "endpoint_subsets": {},
+            "disable_prefix_rewrite": {},
+            "request_headers_to_add": [
+              {
+                "name": "X-Secret",
+                "secret_value": {
+                  "blindfold_secret_info": {
+                    "location": "string:///{{extra_shared_secret_blindfold}}"
+                  }
+                },
+                "append": false
+              }
+            ],
+            "request_headers_to_remove": [],
+            "response_headers_to_add": [],
+            "response_headers_to_remove": [],
+            "disable_location_add": false,
+            "inherited_waf": {},
+            "disable_spdy": {},
+            "disable_web_socket_config": {},
+            "default_retry_policy": {},
+            "timeout": 30000,
+            "common_buffering": {},
+            "disable_mirroring": {},
+            "retract_cluster": {},
+            "inherited_bot_defense_javascript_injection": {}
           }
         }
       }

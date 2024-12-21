@@ -8,7 +8,7 @@
     },
     "annotations": {
       "ves.io/app": "nginx-oidc-gw",
-      "ves.io/workload-flavor": "ves-io-medium"
+      "ves.io/workload-flavor": "nginx-oidc-gw"
     },
     "description": "NGINX workshop",
     "disable": false
@@ -23,7 +23,7 @@
             "name": "{{ stats_acr_login_server }}/nginx-oidc:{{ extra_build_name }}",
             "container_registry": {
               "tenant": "{{ extra_volterra.tenant.full }}",
-              "namespace": "{{ extra_volterra_namespace }}",
+              "namespace": "shared",
               "name": "{{ stats_acr_login_server  | replace('.', '-') }}"
             },
             "pull_policy": "IMAGE_PULL_POLICY_ALWAYS"
@@ -209,6 +209,7 @@
         }
       ],
       "deploy_options": {
+    {%- if extra_virtual_site == "CE" -%}
         "deploy_ce_virtual_sites": {
           "virtual_site": [
             {
@@ -219,6 +220,19 @@
             }
           ]
         }
+    {%- endif -%}
+    {%- if extra_virtual_site == "RE" -%}
+        "deploy_re_virtual_sites": {
+          "virtual_site": [
+            {
+              "tenant": "{{ extra_volterra.tenant.full }}",
+              "namespace": "shared",
+              "name": "shared-service-oidc",
+              "kind": "virtual_site"
+            }
+          ]
+        }
+    {%- endif -%}
       },
       "advertise_options": {
         "advertise_in_cluster": {
