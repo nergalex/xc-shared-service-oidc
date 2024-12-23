@@ -19,11 +19,21 @@ This repository describes *How To Deploy* it with an Ansible role.
 
 Pre-requisites
 *****************************************
-- **XC Service Credential**: Create a Service Credential with admin right level on namespaces System, Shared and Applications. Doc `here <https://my.f5.com/manage/s/article/K000147166>`_.
-- **XC blindfold secret**: Encrypt a shared Secret to authenticate traffic from F5 XC on you Origin Service. Vulnerability a SaaS offer is described `here <https://cybersecuritynews.com/waf-vulnerability-in-akamai-cloudflare-and-imperva/>`_. Secret encryption is done by using F5 Blindfold patent, doc `here <https://docs.cloud.f5.com/docs-v2/multi-cloud-network-connect/how-to/adv-security/blindfold-tls-certs>`_.
-- **NGINX+ license**: Because jwt module is only available for Enterprise grade NGINX instances, download from your `MyF5 <https://account.f5.com/myf5>`_ your NGINX+ license (key, crt, jwt). Replace the files in the ``./xc/files/`` folder.
-- **oAuth Redirected URIs**: On your Identy Providers (IdP) service console, aka oAuth Authorization Servers, allows the redirected URIs ``/_codexch`` for your protected apps. For example: ``https://*.f5xcdev.com/_codexch``
-- **XC DNS Primary** (option): delegate a DNS zone to F5 XC. Doc `here <https://docs.cloud.f5.com/docs-v2/dns-management/how-to/manage-dns-zones#create-secondary-zone>`_. Optionnal if you use an External DNS hosting.
+1. **XC Service Credential**: Create a Service Credential with admin right level on namespaces System, Shared and Applications. Doc `here <https://my.f5.com/manage/s/article/K000147166>`_.
+2. **XC blindfold secret**: Encrypt a shared Secret to authenticate traffic from F5 XC on you Origin Service. Vulnerability a SaaS offer is described `here <https://cybersecuritynews.com/waf-vulnerability-in-akamai-cloudflare-and-imperva/>`_. Secret encryption is done by using F5 Blindfold patent, doc `here <https://docs.cloud.f5.com/docs-v2/multi-cloud-network-connect/how-to/adv-security/blindfold-tls-certs>`_.
+2. **NGINX+ license**: Because jwt module is only available for Enterprise grade NGINX instances, download from your `MyF5 <https://account.f5.com/myf5>`_ your NGINX+ license (key, crt, jwt). Replace the files in the ``./xc/files/`` folder.
+4. **oAuth Redirected URIs**: On your Identy Providers (IdP) service console, aka oAuth Authorization Servers, allows the redirected URIs ``/_codexch`` for your protected apps. For example: ``https://*.f5xcdev.com/_codexch``
+5. **XC DNS Primary** (option): delegate a DNS zone to F5 XC. Doc `here <https://docs.cloud.f5.com/docs-v2/dns-management/how-to/manage-dns-zones#create-secondary-zone>`_. Optionnal if you use an External DNS hosting.
+6. **oAuth/OIDC IdP info**: In the Ansible playbook, the variables ``extra_azure`` and ``extra_okta`` will replace the mapping variable and values in ``./xc/templates/nginx_one_instance_group_configuration_openid_connect_configuration.conf`` with your IdPs info
+    You can adapt this Template add more supported IdPs. Please find bellow guides to retrieve the required information for well known Identity Providers:
+
+    - `Amazon Cognito <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/cognito/>`_
+    - `Auth0 <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/auth0/>`_
+    - `Keycloak <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/keycloak/>`_
+    - `Microsoft Active Directory FS <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/active-directory-federation-services/>`_
+    - `okta <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/okta/>`_
+    - `onelogin <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/onelogin/>`_
+    - `Ping Identity <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/ping-identity/>`_
 
 1. Shared Service "PaaS Secure Access"
 *****************************************
@@ -68,9 +78,6 @@ variable                                        Description
 ``extra_okta.tenant``                           Okta tenant
 ``extra_okta.server_id``                        Okta Server ID / Authorization Server ID
 ==============================================  =============================================
-
-    **oAuth/OIDC IdP info**: The variables ``extra_azure`` and ``extra_okta`` will replace the mapping variable and values in ``./xc/templates/nginx_one_instance_group_configuration_openid_connect_configuration.conf`` with your IdPs info
-    You can adapt this Template add more supported IdPs.
 
 2. Deploy an Application protected by "PaaS Secure Access"
 **********************************************************
