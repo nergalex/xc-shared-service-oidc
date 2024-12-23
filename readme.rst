@@ -21,8 +21,8 @@ Pre-requisites
 *****************************************
 - **XC Service Credential**: Create a Service Credential with admin right level on namespaces System, Shared and Applications. Doc `here <https://my.f5.com/manage/s/article/K000147166>`_.
 - **XC blindfold secret**: Encrypt a shared Secret to authenticate traffic from F5 XC on you Origin Service. Vulnerability a SaaS offer is described `here <https://cybersecuritynews.com/waf-vulnerability-in-akamai-cloudflare-and-imperva/>`_. Secret encryption is done by using F5 Blindfold patent, doc `here <https://docs.cloud.f5.com/docs-v2/multi-cloud-network-connect/how-to/adv-security/blindfold-tls-certs>`_.
+- **NGINX+ license**: Because jwt module is only available for Enterprise grade NGINX instances, download from your `MyF5 <https://account.f5.com/myf5>`_ your NGINX+ license (key, crt, jwt). Replace the files in the ``./xc/files/`` folder.
 - **oAuth Redirected URIs**: On your Identy Providers (IdP) service console, aka oAuth Authorization Servers, allows the redirected URIs ``/_codexch`` for your protected apps. For example: ``https://*.f5xcdev.com/_codexch``
-- **NGINX+ license**: Because jwt module is only available for Enterprise grade NGINX instances, download from your `MyF5 <https://account.f5.com/myf5>`_ your NGINX+ license (key, crt, jwt). Replace the ``./xc/files/nginx-license.jwt`` of this Ansible role folder.
 - **XC DNS Primary** (option): delegate a DNS zone to F5 XC. Doc `here <https://docs.cloud.f5.com/docs-v2/dns-management/how-to/manage-dns-zones#create-secondary-zone>`_. Optionnal if you use an External DNS hosting.
 
 1. Shared Service "PaaS Secure Access"
@@ -47,12 +47,15 @@ Deploy a "PaaS Secure Access" as a Shared Service for other Application namespac
 
 Example of Ansible playbooks in ``roles/xc/tasks``: ``create_vk8s_nginx_oidc.yaml``
 
+**oAuth/OIDC IdP info**: The variables ``extra_azure`` and ``extra_okta`` will replace the mapping variable and values in ``./xc/templates/nginx_one_instance_group_configuration_openid_connect_configuration.conf`` with your IdPs info
+You can adapt this Template add more IdP to support.
+
 ==============================================  =============================================
 variable                                        Description
 ==============================================  =============================================
 ``extra_build_name``                            image tag
 ``extra_namespace``                             targeted namespace that hosts the PaaS
-``extra_virtual_site``                          Deploy on RE or CE
+``extra_virtual_site``                          Deploy on ``RE`` or ``CE``
 ``extra_nginx_agent_server_token``              NGIXN One token
 ``extra_volterra.tenant.full``                  long tenant name
 ``extra_volterra.tenant.short``                 short tenant name
@@ -78,24 +81,19 @@ Example of Ansible playbooks in ``roles/xc/tasks``: ``create_vk8s_nginx_oidc.yam
 ==============================================  =============================================
 variable                                        Description
 ==============================================  =============================================
-``extra_build_name``                            image tag
-``extra_namespace``                             targeted namespace that hosts the PaaS
-``extra_virtual_site``                          Deploy on RE or CE
-``extra_nginx_agent_server_token``              NGIXN One token
+``extra_app.domain``                            DNS zone
+``extra_app.name``                              FQDN to publish = name + domain
+``extra_app.origin_dns``                        FQDN of the origin server
+``extra_my_idp``                                Selected IdP that will secure access
+``extra_namespace_app``                         Namespace of the app
+``extra_namespace_shared_services``             Namespace of the PaaS Secure Access
+``extra_shared_secret_blindfold``               Shared secret between App and F5 XC
+``extra_virtual_site``                          ``RE`` or ``CE`` where the PaaS is hosted
 ``extra_volterra.tenant.full``                  long tenant name
 ``extra_volterra.tenant.short``                 short tenant name
 ``extra_volterra.token``                        Service Credential >> API token
-``stats_acr_login_server``                      Container Registry FQDN
-``stats_acr_password``                          Container Registry credential
-``stats_acr_username``                          Container Registry credential
-``extra_azure.client_id``                       Azure App Client ID
-``extra_azure.client_secret``                   Azure App Client Secret value
-``extra_azure.tenant``                          Azure App ID
-``extra_okta.client_id``                        Okta App Client ID
-``extra_okta.client_secret``                    Okta App Client Secret value
-``extra_okta.tenant``                           Okta tenant
-``extra_okta.server_id``                        Okta Server ID / Authorization Server ID
 ==============================================  =============================================
+
 
 3. External DNS
 **********************************************************
