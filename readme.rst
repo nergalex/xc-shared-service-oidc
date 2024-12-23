@@ -52,7 +52,7 @@ variable                                        Description
 ==============================================  =============================================
 ``extra_build_name``                            image tag
 ``extra_namespace``                             targeted namespace that hosts the PaaS
-``extra_virtual_site``                          Deploy on ``RE`` or ``CE``
+``extra_virtual_site``                          ``RE`` or ``CE`` that hosts the PaaS
 ``extra_nginx_agent_server_token``              NGIXN One token
 ``extra_volterra.tenant.full``                  long tenant name
 ``extra_volterra.tenant.short``                 short tenant name
@@ -87,7 +87,7 @@ variable                                        Description
 ``extra_namespace_app``                         Namespace of the app
 ``extra_namespace_shared_services``             Namespace of the PaaS Secure Access
 ``extra_shared_secret_blindfold``               Shared secret between App and F5 XC
-``extra_virtual_site``                          ``RE`` or ``CE`` where the PaaS is hosted
+``extra_virtual_site``                          ``RE`` or ``CE`` that hosts the PaaS
 ``extra_volterra.tenant.full``                  long tenant name
 ``extra_volterra.tenant.short``                 short tenant name
 ``extra_volterra.token``                        Service Credential >> API token
