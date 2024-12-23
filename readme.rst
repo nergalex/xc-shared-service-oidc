@@ -33,7 +33,7 @@ Build your licensed NGINX image
 Build the Docker file `here <https://github.com/nergalex/docker-nginx-oidc/tree/master/debian/nginx-unprivileged-r33_agent>`_
 and Push the image to your private Container Registry.
 
-Ansible playbooks: ``roles/xc/tasks``: ``build_nginx_oidc_image.yaml`` ; ``push_image.yaml``
+Ansible playbooks: ``./playbooks/roles/xc/tasks``: ``build_nginx_oidc_image.yaml`` ; ``push_image.yaml``
 
 .. code-block:: yaml
 
@@ -45,7 +45,7 @@ Configure F5 XC
 =========================================
 Deploy a "PaaS Secure Access" as a Shared Service for other Application namespaces, i.e. not isolated.
 
-Example of Ansible playbooks in ``roles/xc/tasks``: ``create_vk8s_nginx_oidc.yaml``
+Ansible playbook: ``./playbooks/roles/xc/taskscreate_vk8s_nginx_oidc.yaml``
 
 ==============================================  =============================================
 variable                                        Description
@@ -75,7 +75,7 @@ variable                                        Description
 2. Deploy an Application protected by "PaaS Secure Access"
 **********************************************************
 
-Example of Ansible playbooks in ``roles/xc/tasks``: ``create_vk8s_nginx_oidc.yaml``
+Ansible playbook: ``./playbooks/roles/xc/taskscreate_vk8s_nginx_oidc.yaml``
 
 ==============================================  =============================================
 variable                                        Description
