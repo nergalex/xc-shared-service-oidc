@@ -1,0 +1,52 @@
+---
+- name: INSTALL package
+  package:
+    name:
+      - python3-pip
+      - git
+
+- name: CREATE source image directory
+  file:
+    path: /root/source_images/
+    state: directory
+
+- name: FETCH git repo
+  git:
+    repo: https://github.com/nergalex/docker-nginx-oidc.git
+    dest: /root/source_images/nginx-oidc
+    force: yes
+
+- name: COPY NGINX certificate > build dir
+  copy:
+    content: "{{ lookup('file', 'nginx-repo.crt') }}"
+    dest: "/root/source_images/nginx-oidc/{{ extra_build_distri }}/{{ extra_build_name }}/nginx-repo.crt"
+    mode: '0400'
+
+- name: COPY NGINX key > build dir
+  copy:
+    content: "{{ lookup('file', 'nginx-repo.key') }}"
+    dest: "/root/source_images/nginx-oidc/{{ extra_build_distri }}/{{ extra_build_name }}/nginx-repo.key"
+    mode: '0400'
+
+- name: image name and tag
+  set_fact:
+    var_tag: "{{ extra_build_name }}"
+    var_name: "nginx-oidc"
+
+- name: BUILD image
+  shell: "DOCKER_BUILDKIT=1 \
+  docker build \
+  --tag {{ var_name }}:{{ var_tag }} \
+  --secret id=nginx-crt,src=nginx-repo.crt \
+  --secret id=nginx-key,src=nginx-repo.key \
+  ."
+  args:
+    chdir: "/root/source_images/nginx-oidc/{{ extra_build_distri }}/{{ extra_build_name }}/"
+
+- name: "Artifact for Tower Workflows"
+  set_stats:
+    data:
+      stats_nginx_image_tag: "{{ var_tag }}"
+      stats_nginx_image_name: "{{ var_name }}"
+
+...
