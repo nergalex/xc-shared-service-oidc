@@ -70,7 +70,7 @@ variable                                        Description
 ==============================================  =============================================
 
     **oAuth/OIDC IdP info**: The variables ``extra_azure`` and ``extra_okta`` will replace the mapping variable and values in ``./xc/templates/nginx_one_instance_group_configuration_openid_connect_configuration.conf`` with your IdPs info
-    You can adapt this Template add more IdP to support.
+    You can adapt this Template add more supported IdPs.
 
 2. Deploy an Application protected by "PaaS Secure Access"
 **********************************************************
