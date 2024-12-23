@@ -28,6 +28,7 @@ Pre-requisites
     You can adapt this Template to add more supported IdPs. Please find bellow guides to retrieve the required information from well known IdPs:
 
     - `Amazon Cognito <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/cognito/>`_
+    - `Azure EntraID <https://github.com/nergalex/xc-shared-service-oidc?tab=readme-ov-file#azure-entra-id>`_
     - `Auth0 <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/auth0/>`_
     - `Keycloak <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/keycloak/>`_
     - `Microsoft Active Directory FS <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/active-directory-federation-services/>`_
@@ -122,7 +123,7 @@ You can get ``XC-tenant-dedicated-IP`` and ``XC-my-app-CNAME`` by calling the HT
    :alt: DNS and IP info for an App
 
 
-Azure Entra ID
+OIDC & Azure EntraID
 **********************************************************
 
 See bellow some configuration examples for the use of
