@@ -120,3 +120,60 @@ You can get ``XC-tenant-dedicated-IP`` and ``XC-my-app-CNAME`` by calling the HT
    :align: center
    :width: 700
    :alt: DNS and IP info for an App
+
+
+Azure Entra ID
+**********************************************************
+
+See bellow some configuration examples for the use of
+`auth code flow paired with Proof Key for Code Exchange (PKCE) and OpenID Connect (OIDC) <https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code>`_
+to get access tokens and ID tokens in these types of apps:
+    - Single Page Application (SPA)
+    - Standard (server-based) web application
+    - Desktop and mobile apps
+
+*demo video:*
+
+.. raw:: html
+
+    <a href="http://www.youtube.com/watch?v=0OfIQUqWw6g"><img src="http://img.youtube.com/vi/0OfIQUqWw6g/0.jpg" width="600" height="300" title="XC Secure GW - Azure AD"></a>
+
+A guide `here <https://learn.microsoft.com/en-us/azure/active-directory/develop/scenario-spa-app-registration>`_ to configure a SPA with Azure AD.
+After registering your 'PaaS Secure Access' instance as an Application in Azure AD, you will obtain a *Client ID*,
+or ``$oidc_client``, a Public identifier for the client that is required for all OAuth flows.
+
+*Secure Access* configuration file ``openid_connect_configuration.conf``:
+
+.. code-block:: nginx
+    :emphasize-lines: 1-15
+
+        map $host $oidc_authz_endpoint {
+            default "https://login.microsoftonline.com/MyAzureTenantID/oauth2/v2.0/authorize";
+        }
+        map $host $oidc_token_endpoint {
+            default "https://login.microsoftonline.com/MyAzureTenantID/oauth2/v2.0/token";
+        }
+        map $host $oidc_jwt_keyfile {
+            default "https://login.microsoftonline.com/MyAzureTenantID/discovery/keys";
+        }
+        map $host $oidc_client {
+            default "MyClientID";
+        }
+        map $host $oidc_pkce_enable {
+            default 1;
+        }
+
+------------------------------------------------------------------
+
+Then, for each Application to protect by your 'PaaS Secure Access',
+allows the App's FQDN in *Redirect URIs* using the suffix ``/_codexch``.
+A wildcard can be used as described `here <https://learn.microsoft.com/en-us/azure/active-directory/develop/reply-url#restrictions-on-wildcards-in-redirect-uris>`_.
+
+Example:
+
+.. image:: ./_pictures/azure_ad_login_uri.png
+   :align: center
+   :width: 500
+   :alt: User Identifier
+
+
