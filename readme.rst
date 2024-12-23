@@ -3,15 +3,15 @@ XC OIDC as a Shared service
 
 F5 Distributed Cloud (XC) allows to insert any container based service in the data-path,
 named **Platform as a Service** (PaaS).
-F5 has pre-defined PaaS solutions based on our most reliable and proven Reverse Proxy technology in the world: NGINX.
-The article here describe the High Level Design of the PaaS **Secure Access** that enables a oAuth/OIDC GW to authenticate user access to your Web applications.
+F5 has pre-defined PaaS solutions based on our most reliable and proven world grade Reverse Proxy technology: NGINX.
+The article `here <https://f5-k8s-ctfd.docs.emea.f5se.com/en/latest/class8/module2/module2.html>`_ describe the High Level Design of the PaaS **Secure Access** that enables a oAuth/OIDC GW to authenticate user access to your Web applications.
 
 .. image:: ./_pictures/design.png
    :align: center
    :width: 700
    :alt: vK8S
 
-This repository describes How to deploy it with an Ansible role.
+This repository describes *How To Deploy* it with an Ansible role.
 
 .. contents:: Contents
     :local:
@@ -22,8 +22,8 @@ Pre-requisites
 - **XC Service Credential**: Create a Service Credential with admin right level on namespaces System, Shared and Applications. Doc `here <https://my.f5.com/manage/s/article/K000147166>`_.
 - **XC blindfold secret**: Encrypt a shared Secret to authenticate traffic from F5 XC on you Origin Service. Vulnerability a SaaS offer is described `here <https://cybersecuritynews.com/waf-vulnerability-in-akamai-cloudflare-and-imperva/>`_. Secret encryption is done by using F5 Blindfold patent, doc `here <https://docs.cloud.f5.com/docs-v2/multi-cloud-network-connect/how-to/adv-security/blindfold-tls-certs>`_.
 - **oAuth Redirected URIs**: On your Identy Providers (IdP) service console, aka oAuth Authorization Servers, allows the redirected URIs ``/_codexch`` for your protected apps. For example: ``https://*.f5xcdev.com/_codexch``
-- **NGINX+ license**: Because jwt module is only available for Enterprise grade NGINX instances, download from your `MyF5 <https://account.f5.com/myf5>`_ your NGINX+ license (key, crt, jwt).
-- **XC DNS Primary** (option): delegate a DNS zone to F5 XC. Doc `here <https://docs.cloud.f5.com/docs-v2/dns-management/how-to/manage-dns-zones#create-secondary-zone>`_.
+- **NGINX+ license**: Because jwt module is only available for Enterprise grade NGINX instances, download from your `MyF5 <https://account.f5.com/myf5>`_ your NGINX+ license (key, crt, jwt). Replace the ``./xc/files/nginx-license.jwt`` of this Ansible role folder.
+- **XC DNS Primary** (option): delegate a DNS zone to F5 XC. Doc `here <https://docs.cloud.f5.com/docs-v2/dns-management/how-to/manage-dns-zones#create-secondary-zone>`_. Optionnal if you use an External DNS hosting.
 
 1. Shared Service "PaaS Secure Access"
 *****************************************
@@ -33,7 +33,7 @@ Build your licensed NGINX image
 Build the Docker file `here <https://github.com/nergalex/docker-nginx-oidc/tree/master/debian/nginx-unprivileged-r33_agent>`_
 and Push the image to your private Container Registry.
 
-Example of Ansible playbooks in ``roles/xc/tasks``: ``build_nginx_oidc_image.yaml`` ; ``push_image.yaml``
+Ansible playbooks: ``roles/xc/tasks``: ``build_nginx_oidc_image.yaml`` ; ``push_image.yaml``
 
 .. code-block:: yaml
 
