@@ -47,9 +47,6 @@ Deploy a "PaaS Secure Access" as a Shared Service for other Application namespac
 
 Example of Ansible playbooks in ``roles/xc/tasks``: ``create_vk8s_nginx_oidc.yaml``
 
-**oAuth/OIDC IdP info**: The variables ``extra_azure`` and ``extra_okta`` will replace the mapping variable and values in ``./xc/templates/nginx_one_instance_group_configuration_openid_connect_configuration.conf`` with your IdPs info
-You can adapt this Template add more IdP to support.
-
 ==============================================  =============================================
 variable                                        Description
 ==============================================  =============================================
@@ -72,6 +69,8 @@ variable                                        Description
 ``extra_okta.server_id``                        Okta Server ID / Authorization Server ID
 ==============================================  =============================================
 
+    **oAuth/OIDC IdP info**: The variables ``extra_azure`` and ``extra_okta`` will replace the mapping variable and values in ``./xc/templates/nginx_one_instance_group_configuration_openid_connect_configuration.conf`` with your IdPs info
+    You can adapt this Template add more IdP to support.
 
 2. Deploy an Application protected by "PaaS Secure Access"
 **********************************************************
