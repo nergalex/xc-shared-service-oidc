@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "{{ extra_app.name }}-public",
+    "name": "{{ extra_namespace_app }}-public",
     "namespace": "{{ extra_volterra_namespace }}",
     "labels": {
       "ves.io/app_type": "cloudbuilder",
@@ -12,7 +12,7 @@
   },
   "spec": {
     "domains": [
-      "{{ extra_app.name }}.{{ extra_app.domain }}"
+      "{{ extra_namespace_app }}.{{ extra_app.domain }}"
     ],
     "https_auto_cert": {
       "http_redirect": true,
@@ -66,6 +66,11 @@
                 "name": "x-my-idp",
                 "value": "{{ extra_my_idp }}",
                 "append": false
+              },
+              {
+                "name": "x-my-scope",
+                "value": "{{ extra_my_scope }}",
+                "append": false
               }
             ],
             "request_headers_to_remove": [],
@@ -75,7 +80,19 @@
             "inherited_waf": {},
             "disable_spdy": {},
             "disable_web_socket_config": {},
-            "default_retry_policy": {},
+            "retry_policy": {
+              "retry_condition": [
+                "connect-failure",
+                "reset",
+                "5xx"
+              ],
+              "num_retries": 1,
+              "per_try_timeout": 0,
+              "back_off": {
+                "base_interval": 25,
+                "max_interval": 0
+              }
+            },
             "timeout": 30000,
             "common_buffering": {},
             "disable_mirroring": {},
@@ -88,6 +105,11 @@
     "disable_api_definition": {},
     "add_location": true,
     "no_challenge": {},
+    "more_option": {
+      "max_request_header_size": 60,
+      "idle_timeout": 40000,
+      "disable_default_error_pages": false
+    },
     "disable_malicious_user_detection": {},
     "disable_rate_limit": {},
     "waf_exclusion_rules": [],
@@ -98,7 +120,10 @@
     "multi_lb_app": {},
     "disable_bot_defense": {},
     "cookie_stickiness": {
-      "name": "xc-session"
+      "name": "xc-session",
+      "ttl": 3600000,
+      "add_secure": {},
+      "add_httponly": {}
     }
   }
 }

@@ -4,55 +4,55 @@
     var_instance_tag: "{{ extra_namespace }}"
     NGINX_AGENT_SERVER_TOKEN: "{{ extra_nginx_agent_server_token }}"
 
-- name: Create or Update NameSpace
-  block:
-
-    - name: GET NameSpace
-      uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/web/namespaces/{{ extra_volterra_namespace }}"
-        method: GET
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        status_code: 200, 404
-        validate_certs: no
-      register: var_register
-
-    - name: CREATE NameSpace
-      uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/web/namespaces"
-        method: POST
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        body: "{{ lookup('template','namespace.json') }}"
-        body_format: json
-        status_code: 200
-        validate_certs: no
-      when: var_register.status == 404
-
-    - name: UPDATE NameSpace
-      uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/web/namespaces/{{ extra_volterra_namespace }}"
-        method: PUT
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        body: "{{ lookup('template','namespace.json') }}"
-        body_format: json
-        status_code: 200
-        validate_certs: no
-      when: var_register.status == 200
-
-- pause:
-    minutes: 1
-
-- name: Create or Update Virtual Site
+#- name: Create or Update NameSpace
+#  block:
+#
+#    - name: GET NameSpace
+#      uri:
+#        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/web/namespaces/{{ extra_volterra_namespace }}"
+#        method: GET
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        status_code: 200, 404
+#        validate_certs: no
+#      register: var_register
+#
+#    - name: CREATE NameSpace
+#      uri:
+#        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/web/namespaces"
+#        method: POST
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        body: "{{ lookup('template','namespace.json') }}"
+#        body_format: json
+#        status_code: 200
+#        validate_certs: no
+#      when: var_register.status == 404
+#
+#    - name: UPDATE NameSpace
+#      uri:
+#        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/web/namespaces/{{ extra_volterra_namespace }}"
+#        method: PUT
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        body: "{{ lookup('template','namespace.json') }}"
+#        body_format: json
+#        status_code: 200
+#        validate_certs: no
+#      when: var_register.status == 200
+#
+#- pause:
+#    minutes: 1
+#
+- name: Create or Update Virtual Site - vk8s shared services
   block:
 
     - name: GET Virtual Site - vk8s shared services
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-service-oidc"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-service-oidc-gw"
         method: GET
         headers:
           Content-Type: application/json
@@ -76,7 +76,7 @@
 
     - name: UPDATE Virtual Site - vk8s shared services
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-service-oidc"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-service-oidc-gw"
         method: PUT
         headers:
           Content-Type: application/json
@@ -87,12 +87,12 @@
         validate_certs: no
       when: var_register.status == 200
 
-- name: Create or Update Virtual Site - egress
+- name: Create or Update Virtual Site - egress re-europe
   block:
 
-    - name: GET Virtual Site - egress
+    - name: GET Virtual Site - egress re-europe
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/re-fr"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/re-europe"
         method: GET
         headers:
           Content-Type: application/json
@@ -101,31 +101,18 @@
         validate_certs: no
       register: var_register
 
-    - name: CREATE Virtual Site - egress
+    - name: CREATE Virtual Site - egress re-europe
       uri:
         url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites"
         method: POST
         headers:
           Content-Type: application/json
           Authorization: "APIToken {{ extra_volterra.token }}"
-        body: "{{ lookup('template','virtual_site_re_fr.json') }}"
+        body: "{{ lookup('template','virtual_site_re_europe.json') }}"
         body_format: json
         status_code: 200
         validate_certs: no
       when: var_register.status == 404
-
-    - name: UPDATE Virtual Site - egress
-      uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/re-fr"
-        method: PUT
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        body: "{{ lookup('template','virtual_site_re_fr.json') }}"
-        body_format: json
-        status_code: 200
-        validate_certs: no
-      when: var_register.status == 200
 
 - name: Create or Update Virtual K8s
   block:
@@ -167,94 +154,94 @@
         validate_certs: no
       when: var_register.status == 200
 
-- pause:
-    minutes: 2
-
-- name: Create or Update Container Registry
-  block:
-
-    - name: GET Container Registry
-      uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/container_registrys/{{ stats_acr_login_server | replace('.', '-') }}"
-        method: GET
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        status_code: 200, 404
-        validate_certs: no
-      register: var_register
-
-    - name: CREATE Container Registry
-      uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/container_registrys"
-        method: POST
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        body: "{{ lookup('template','container_registry_shared.json') }}"
-        body_format: json
-        status_code: 200
-        validate_certs: no
-      when: var_register.status == 404
-
-    - name: UPDATE Container Registry | site 3 only
-      uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/container_registrys/{{ stats_acr_login_server | replace('.', '-') }}"
-        method: PUT
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        body: "{{ lookup('template','container_registry_shared.json') }}"
-        body_format: json
-        status_code: 200
-        validate_certs: no
-      when: var_register.status == 200
-
-- name: Create NGINX one - Data Plane key
-  block:
-
-    - name: GET NGINX one - Data Plane key
-      uri:
-        url: "https://{{extra_volterra.tenant.short}}.console.ves.volterra.io/api/nginx/one/namespaces/default/data-plane-keys?filter_fields=name&filter_ops=IN&filter_values=shared-services"
-        method: GET
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        status_code: 200
-        validate_certs: no
-      register: var_register
-
-    - name: Error message
-      fail:
-        msg: Existing NGINX One token, please set the variable NGINX_AGENT_SERVER_TOKEN
-      when: NGINX_AGENT_SERVER_TOKEN == "auto" and var_register.json.count == 1
-
-    - name: CREATE NGINX one - Data Plane key
-      uri:
-        url: "https://{{extra_volterra.tenant.short}}.console.ves.volterra.io/api/nginx/one/namespaces/default/data-plane-keys"
-        method: POST
-        headers:
-          Content-Type: application/json
-          Authorization: "APIToken {{ extra_volterra.token }}"
-        body: '{"name":"shared-services"}'
-        body_format: json
-        status_code: 200
-        validate_certs: no
-      when: NGINX_AGENT_SERVER_TOKEN  == "auto" and var_register.json.count == 0
-      register: var_object
-
-    - name: Set NGINX_AGENT_SERVER_TOKEN
-      set_fact:
-        NGINX_AGENT_SERVER_TOKEN: "{{ var_object.json.key }}"
-      when: NGINX_AGENT_SERVER_TOKEN  == "auto" and var_register.json.count == 0
-
-    - name: Notification message
-      debug:
-        msg: "{{ NGINX_AGENT_SERVER_TOKEN }}  <-- This your Data Plane Key that was successfully generated. Copy and save this key now. NGINX One does not save this value and it cannot be retrieved again once you close this dialog."
-      when: var_register.json.count == 0
-
-- debug:
-    var: NGINX_AGENT_SERVER_TOKEN
+#- pause:
+#    minutes: 2
+#
+#- name: Create or Update Container Registry
+#  block:
+#
+#    - name: GET Container Registry
+#      uri:
+#        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/container_registrys/{{ stats_acr_login_server | replace('.', '-') }}"
+#        method: GET
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        status_code: 200, 404
+#        validate_certs: no
+#      register: var_register
+#
+#    - name: CREATE Container Registry
+#      uri:
+#        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/container_registrys"
+#        method: POST
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        body: "{{ lookup('template','container_registry_shared.json') }}"
+#        body_format: json
+#        status_code: 200
+#        validate_certs: no
+#      when: var_register.status == 404
+#
+#    - name: UPDATE Container Registry | site 3 only
+#      uri:
+#        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/container_registrys/{{ stats_acr_login_server | replace('.', '-') }}"
+#        method: PUT
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        body: "{{ lookup('template','container_registry_shared.json') }}"
+#        body_format: json
+#        status_code: 200
+#        validate_certs: no
+#      when: var_register.status == 200
+#
+#- name: Create NGINX one - Data Plane key
+#  block:
+#
+#    - name: GET NGINX one - Data Plane key
+#      uri:
+#        url: "https://{{extra_volterra.tenant.short}}.console.ves.volterra.io/api/nginx/one/namespaces/default/data-plane-keys?filter_fields=name&filter_ops=IN&filter_values=shared-services"
+#        method: GET
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        status_code: 200
+#        validate_certs: no
+#      register: var_register
+#
+#    - name: Error message
+#      fail:
+#        msg: Existing NGINX One token, please set the variable NGINX_AGENT_SERVER_TOKEN
+#      when: NGINX_AGENT_SERVER_TOKEN == "auto" and var_register.json.count == 1
+#
+#    - name: CREATE NGINX one - Data Plane key
+#      uri:
+#        url: "https://{{extra_volterra.tenant.short}}.console.ves.volterra.io/api/nginx/one/namespaces/default/data-plane-keys"
+#        method: POST
+#        headers:
+#          Content-Type: application/json
+#          Authorization: "APIToken {{ extra_volterra.token }}"
+#        body: '{"name":"shared-services"}'
+#        body_format: json
+#        status_code: 200
+#        validate_certs: no
+#      when: NGINX_AGENT_SERVER_TOKEN  == "auto" and var_register.json.count == 0
+#      register: var_object
+#
+#    - name: Set NGINX_AGENT_SERVER_TOKEN
+#      set_fact:
+#        NGINX_AGENT_SERVER_TOKEN: "{{ var_object.json.key }}"
+#      when: NGINX_AGENT_SERVER_TOKEN  == "auto" and var_register.json.count == 0
+#
+#    - name: Notification message
+#      debug:
+#        msg: "{{ NGINX_AGENT_SERVER_TOKEN }}  <-- This your Data Plane Key that was successfully generated. Copy and save this key now. NGINX One does not save this value and it cannot be retrieved again once you close this dialog."
+#      when: var_register.json.count == 0
+#
+#- debug:
+#    var: NGINX_AGENT_SERVER_TOKEN
 
 - name: Create or Update NGINX one - Instance Group
   block:
@@ -370,6 +357,7 @@
         status_code: 200
         validate_certs: no
       when: var_register.status == 200
+
 
 - name: Create or Update Workload nginx-oidc-gw
   block:

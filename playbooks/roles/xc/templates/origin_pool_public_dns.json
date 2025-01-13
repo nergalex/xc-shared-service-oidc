@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "{{ extra_app.name }}-origin",
+    "name": "{{ extra_namespace_app }}-origin",
     "namespace": "{{ extra_volterra_namespace }}",
     "labels": {
       "owner": "{{ extra_owner_email.split('@')[0] }}",
@@ -19,7 +19,7 @@
             "virtual_site": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "re-fr",
+              "name": "re-europe",
               "kind": "virtual_site"
             }
           },
@@ -42,8 +42,8 @@
     "healthcheck": [
       {
         "tenant": "{{ extra_volterra.tenant.full }}",
-        "namespace": "shared",
-        "name": "shared-services-oidc",
+        "namespace": "{{ extra_volterra_namespace }}",
+        "name": "my-custom-https",
         "kind": "healthcheck"
       }
     ],

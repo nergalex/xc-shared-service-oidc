@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "{{ extra_app.name }}-origin",
+    "name": "{{ extra_namespace_app }}-origin",
     "namespace": "{{ extra_volterra_namespace }}",
     "labels": {
       "ves.io/app_type": "cloudbuilder",
@@ -12,7 +12,7 @@
   },
   "spec": {
     "domains": [
-      "{{ extra_app.name }}.{{ extra_app.domain }}"
+      "{{ extra_namespace_app }}.{{ extra_app.domain }}"
     ],
     "http": {
       "dns_volterra_managed": false,
@@ -27,7 +27,7 @@
             "virtual_site": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "shared-service-oidc",
+              "name": "shared-service-oidc-gw",
               "kind": "virtual_site"
             }
           },
@@ -40,7 +40,7 @@
             "virtual_site": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "shared-service-oidc",
+              "name": "shared-service-oidc-gw",
               "kind": "virtual_site"
             }
           },
@@ -59,7 +59,7 @@
           "headers": [
             {
               "name": "Host",
-              "exact": "{{ extra_app.name }}.{{ extra_app.domain }}",
+              "exact": "{{ extra_namespace_app }}.{{ extra_app.domain }}",
               "invert_match": false
             }
           ],
@@ -71,7 +71,7 @@
               "pool": {
                 "tenant": "{{ extra_volterra.tenant.full }}",
                 "namespace": "{{ extra_volterra_namespace }}",
-                "name": "{{ extra_app.name }}-origin",
+                "name": "{{ extra_namespace_app }}-origin",
                 "kind": "origin_pool"
               },
               "weight": 1,
@@ -116,6 +116,11 @@
     "disable_waf": {},
     "add_location": true,
     "no_challenge": {},
+    "more_option": {
+      "max_request_header_size": 60,
+      "idle_timeout": 30000,
+      "disable_default_error_pages": false
+    },
     "user_id_client_ip": {},
     "disable_rate_limit": {},
     "waf_exclusion_rules": [],
@@ -124,7 +129,7 @@
     "trusted_clients": [],
     "ddos_mitigation_rules": [],
     "service_policies_from_namespace": {},
-    "round_robin": {},
+    "least_active": {},
     "disable_trust_client_ip_headers": {},
     "disable_ddos_detection": {},
     "disable_malicious_user_detection": {},

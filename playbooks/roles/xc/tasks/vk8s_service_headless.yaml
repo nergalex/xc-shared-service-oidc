@@ -1,0 +1,17 @@
+---
+- name: set var NameSpace Defined
+  set_fact:
+    extra_volterra_namespace: "{{ extra_namespace }}"
+
+- name: Create or Update vK8S Service headless
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', 'service-nginx-oidc-gw-headless-sync-zones.yaml') | from_yaml }}"
+    kubeconfig: "{{ lookup('file', 'kubeconfig-vk8s-shared-services.yaml') | from_yaml }}"
+
+
+
+
+
+
+
+...

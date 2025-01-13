@@ -15,7 +15,7 @@
   },
   "spec": {
     "service": {
-      "num_replicas": 1,
+      "num_replicas": 4,
       "containers": [
         {
           "name": "nginx-oidc-gw",
@@ -37,8 +37,8 @@
               },
               "host_header": "check.local"
             },
-            "initial_delay": 0,
-            "timeout": 1,
+            "initial_delay": 10,
+            "timeout": 5,
             "interval": 10,
             "healthy_threshold": 1,
             "unhealthy_threshold": 3
@@ -51,8 +51,8 @@
               },
               "host_header": "check.local"
             },
-            "initial_delay": 0,
-            "timeout": 1,
+            "initial_delay": 10,
+            "timeout": 5,
             "interval": 10,
             "healthy_threshold": 1,
             "unhealthy_threshold": 3
@@ -102,7 +102,7 @@
                 "env_var":
                 {
                     "name": "NGINX_AGENT_SERVER_HOST",
-                    "value": "agent.connect.nginx.com"
+                    "value": "agent.connect.nginx.com."
                 }
             },
             {
@@ -139,20 +139,6 @@
                     "name": "NGINX_AGENT_LOG_PATH",
                     "value": "/nginx/var/log/nginx-agent/agent.log"
                 }
-            },
-            {
-                "env_var":
-                {
-                    "name": "XC_API_KEY",
-                    "value": "{{ extra_volterra.token }}"
-                }
-            },
-            {
-                "env_var":
-                {
-                    "name": "XC_TENANT",
-                    "value": "{{ extra_volterra.tenant.short }}"
-                }
             }
           ]
       },
@@ -160,7 +146,7 @@
         {
           "name": "nginx-zones",
           "empty_dir": {
-            "size_limit": 0.1,
+            "size_limit": 0.01,
             "mount": {
               "mode": "VOLUME_MOUNT_READ_WRITE",
               "mount_path": "/nginx-zones"
@@ -180,7 +166,7 @@
         {
           "name": "nginx-cache",
           "empty_dir": {
-            "size_limit": 0.1,
+            "size_limit": 0.01,
             "mount": {
               "mode": "VOLUME_MOUNT_READ_WRITE",
               "mount_path": "/nginx-cache"
@@ -211,28 +197,19 @@
       "deploy_options": {
     {%- if extra_virtual_site == "CE" -%}
         "deploy_ce_virtual_sites": {
-          "virtual_site": [
-            {
-              "tenant": "{{ extra_volterra.tenant.full }}",
-              "namespace": "{{ extra_volterra_namespace }}",
-              "name": "cloudbuilder-landing-zones",
-              "kind": "virtual_site"
-            }
-          ]
-        }
     {%- endif -%}
     {%- if extra_virtual_site == "RE" -%}
         "deploy_re_virtual_sites": {
+    {%- endif -%}
           "virtual_site": [
             {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "shared-service-oidc",
+              "name": "shared-service-oidc-gw",
               "kind": "virtual_site"
             }
           ]
         }
-    {%- endif -%}
       },
       "advertise_options": {
         "advertise_in_cluster": {
@@ -266,6 +243,14 @@
                 "name": "http-nginx-agent-api",
                 "info": {
                   "port": 8032,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              },
+              {
+                "name": "http-nginx-zone-sync",
+                "info": {
+                  "port": 9000,
                   "protocol": "PROTOCOL_TCP",
                   "same_as_port": {}
                 }

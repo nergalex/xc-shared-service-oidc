@@ -1,0 +1,20 @@
+kind: Service
+metadata:
+  name: nginx-oidc-gw-sync-zones
+  namespace: "{{ extra_volterra_namespace }}"
+  labels:
+    owner: "{{ extra_owner_email.split('@')[0] }}"
+    project: "cloudbuilder"
+  annotations:
+    ves.io/app: nginx-oidc-gw
+    ves.io/virtual-sites: shared/shared-service-oidc-gw
+    ves.io/workload-flavor: nginx-oidc-gw
+spec:
+  selector:
+    ves.io/workload: nginx-oidc-gw
+  clusterIP: None
+  type: ClusterIP
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  internalTrafficPolicy: Cluster

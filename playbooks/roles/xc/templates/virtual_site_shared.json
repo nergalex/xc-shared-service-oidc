@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "shared-service-oidc",
+    "name": "shared-service-oidc-gw",
     "namespace": "shared",
     "labels": {
       "owner": "{{ extra_owner_email.split('@')[0] }}",
@@ -20,7 +20,7 @@
       "site_type": "REGIONAL_EDGE",
       "site_selector": {
         "expressions": [
-          "ves.io/siteName in (ves-io-pa2-par, ves-io-pa4-par)"
+          "ves.io/siteName in (ves-io-ams9-ams, ves-io-pa2-par, ves-io-tn2-lon, ves-io-ny8-nyc, ves-io-fr4-fra, ves-io-tr2-tor)"
         ]
       }
     {%- endif -%}
