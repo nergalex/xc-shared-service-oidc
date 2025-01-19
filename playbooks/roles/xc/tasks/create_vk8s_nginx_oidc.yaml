@@ -52,7 +52,7 @@
 
     - name: GET Virtual Site - vk8s shared services
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-service-oidc-gw"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-services-secure-access"
         method: GET
         headers:
           Content-Type: application/json
@@ -76,7 +76,7 @@
 
     - name: UPDATE Virtual Site - vk8s shared services
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-service-oidc-gw"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/virtual_sites/shared-services-secure-access"
         method: PUT
         headers:
           Content-Type: application/json
@@ -197,6 +197,7 @@
         validate_certs: no
       when: var_register.status == 200
 
+
 - name: Create NGINX one - Data Plane key
   block:
 
@@ -237,7 +238,7 @@
 
     - name: Notification message
       debug:
-        msg: "{{ NGINX_AGENT_SERVER_TOKEN }}  <-- This your Data Plane Key that was successfully generated. Copy and save this key now. NGINX One does not save this value and it cannot be retrieved again once you close this dialog."
+        msg: "{{ NGINX_AGENT_SERVER_TOKEN }}  <-- This is your Data Plane Key that was successfully generated. Copy and save this key now. NGINX One does not save this value and it cannot be retrieved again once you close this dialog."
       when: var_register.json.count == 0
 
 - debug:
@@ -248,7 +249,7 @@
 
     - name: GET Instance Group
       uri:
-        url: "https://{{extra_volterra.tenant.short}}.console.ves.volterra.io/api/nginx/one/namespaces/default/config-sync-groups?filter_fields=name&filter_ops=IN&filter_values={{extra_volterra_namespace}}"
+        url: "https://{{extra_volterra.tenant.short}}.console.ves.volterra.io/api/nginx/one/namespaces/default/config-sync-groups?filter_fields=name&filter_ops=IN&filter_values=shared-service-secure-access"
         method: GET
         headers:
           Content-Type: application/json
@@ -269,7 +270,7 @@
         headers:
           Content-Type: application/json
           Authorization: "APIToken {{ extra_volterra.token }}"
-        body: '{"name":"{{extra_volterra_namespace}}"}'
+        body: '{"name":"shared-service-secure-access"}'
         body_format: json
         status_code: 200
         validate_certs: no
@@ -311,7 +312,7 @@
         validate_certs: no
       register: var_register
       when: var_register.status == 202
-      retries: 3
+      retries: 5
       delay: 5
       until: var_register.json.status != "pending"
 
@@ -323,7 +324,7 @@
 
     - name: GET Workload Flavor
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/workload_flavors/nginx-oidc-gw"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/workload_flavors/nginx-secure-access"
         method: GET
         headers:
           Content-Type: application/json
@@ -347,7 +348,7 @@
 
     - name: UPDATE Workload Flavor
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/workload_flavors/nginx-oidc-gw"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/workload_flavors/nginx-secure-access"
         method: PUT
         headers:
           Content-Type: application/json
@@ -364,7 +365,7 @@
 
     - name: GET Workload nginx-oidc-gw
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/workloads/nginx-oidc-gw"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/workloads/nginx-secure-access"
         method: GET
         headers:
           Content-Type: application/json
@@ -388,7 +389,7 @@
 
     - name: UPDATE Workload nginx-oidc-gw
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/workloads/nginx-oidc-gw"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/workloads/nginx-secure-access"
         method: PUT
         headers:
           Content-Type: application/json
@@ -404,7 +405,7 @@
 
     - name: GET Health Check
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/healthchecks/shared-services-oidc"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/healthchecks/shared-services-secure-access"
         method: GET
         headers:
           Content-Type: application/json
@@ -428,7 +429,7 @@
 
     - name: UPDATE Health Check
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/healthchecks/shared-services-oidc"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/shared/healthchecks/shared-services-secure-access"
         method: PUT
         headers:
           Content-Type: application/json

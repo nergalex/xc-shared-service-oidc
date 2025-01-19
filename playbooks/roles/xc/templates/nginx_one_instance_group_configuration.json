@@ -26,20 +26,32 @@
                     "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_nginx_plus_api.conf') | b64encode }}"
                 },
                 {
-                    "name": "frontend.conf",
-                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_frontend.conf') | b64encode }}"
+                    "name": "healthcheck.conf",
+                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_healthcheck.conf') | b64encode }}"
                 },
                 {
-                    "name": "openid_connect.js",
-                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_openid_connect.js') | b64encode }}"
+                    "name": "jwt_validation.server_conf",
+                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_jwt_validation.server_conf') | b64encode }}"
+                },
+                {
+                    "name": "jwt_validation_frontend.conf",
+                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_jwt_validation_frontend.conf') | b64encode }}"
                 },
                 {
                     "name": "openid_connect.server_conf",
                     "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_openid_connect.server_conf') | b64encode }}"
                 },
                 {
-                    "name": "openid_connect_configuration.conf",
-                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_openid_connect_configuration.conf') | b64encode }}"
+                    "name": "openid_connect_frontend.conf",
+                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_openid_connect_frontend.conf') | b64encode }}"
+                },
+                {
+                    "name": "openid_connect.js",
+                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_openid_connect.js') | b64encode }}"
+                },
+                {
+                    "name": "shared_configuration.conf",
+                    "contents": "{{ lookup('template', 'nginx_one_instance_group_configuration_shared_configuration.conf') | b64encode }}"
                 }
             ]
         }

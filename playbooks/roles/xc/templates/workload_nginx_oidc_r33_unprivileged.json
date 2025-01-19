@@ -1,14 +1,14 @@
 {
   "metadata": {
-    "name": "nginx-oidc-gw",
+    "name": "nginx-secure-access",
     "namespace": "{{ extra_volterra_namespace }}",
     "labels": {
       "owner": "{{ extra_owner_email.split('@')[0] }}",
       "project": "cloudbuilder"
     },
     "annotations": {
-      "ves.io/app": "nginx-oidc-gw",
-      "ves.io/workload-flavor": "nginx-oidc-gw"
+      "ves.io/app": "nginx-secure-access",
+      "ves.io/workload-flavor": "nginx-secure-access"
     },
     "description": "NGINX workshop",
     "disable": false
@@ -18,9 +18,9 @@
       "num_replicas": 4,
       "containers": [
         {
-          "name": "nginx-oidc-gw",
+          "name": "nginx-secure-access",
           "image": {
-            "name": "{{ stats_acr_login_server }}/nginx-oidc:{{ extra_build_name }}",
+            "name": "{{ stats_acr_login_server }}/nginx-secure-access:{{ extra_build_name }}",
             "container_registry": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
@@ -33,7 +33,7 @@
             "http_health_check": {
               "path": "/livez",
               "port": {
-                "num": 8000
+                "num": 8081
               },
               "host_header": "check.local"
             },
@@ -47,7 +47,7 @@
             "http_health_check": {
               "path": "/readyz",
               "port": {
-                "num": 8000
+                "num": 8081
               },
               "host_header": "check.local"
             },
@@ -81,7 +81,7 @@
                 "env_var":
                 {
                     "name": "NGINX_AGENT_INSTANCE_GROUP",
-                    "value": "{{ extra_volterra_namespace }}"
+                    "value": "shared-service-secure-access"
                 }
             },
             {
@@ -205,7 +205,7 @@
             {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "shared-service-oidc-gw",
+              "name": "shared-services-secure-access",
               "kind": "virtual_site"
             }
           ]
@@ -216,7 +216,7 @@
           "multi_ports": {
             "ports": [
               {
-                "name": "http",
+                "name": "http-oidc",
                 "info": {
                   "port": 8000,
                   "protocol": "PROTOCOL_TCP",
@@ -224,9 +224,25 @@
                 }
               },
               {
-                "name": "https",
+                "name": "http-jwt-validation",
+                "info": {
+                  "port": 8001,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              },
+              {
+                "name": "https-oidc",
                 "info": {
                   "port": 4443,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              },
+              {
+                "name": "https-jwt-validation",
+                "info": {
+                  "port": 5443,
                   "protocol": "PROTOCOL_TCP",
                   "same_as_port": {}
                 }
@@ -235,6 +251,14 @@
                 "name": "http-nginx-api",
                 "info": {
                   "port": 8080,
+                  "protocol": "PROTOCOL_TCP",
+                  "same_as_port": {}
+                }
+              },
+              {
+                "name": "http-nginx-healthcheck",
+                "info": {
+                  "port": 8081,
                   "protocol": "PROTOCOL_TCP",
                   "same_as_port": {}
                 }

@@ -15,7 +15,7 @@
         "kind": "virtual_site",
         "tenant": "{{ extra_volterra.tenant.full }}",
         "namespace": "shared",
-        "name": "shared-service-oidc"
+        "name": "shared-services-secure-access"
       }
     ],
     "disabled": {}

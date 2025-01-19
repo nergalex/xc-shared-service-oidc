@@ -2,6 +2,16 @@
   set_fact:
     extra_volterra_namespace: "{{ extra_namespace_app }}"
 
+- name: set var nginx_services
+  set_fact:
+    nginx_services:
+      - name: oidc-gw
+        port: 8000
+        origin_app: frontend
+      - name: jwt-validation-gw
+        port: 8001
+        origin_app: backend
+
 - name: Create or Update NameSpace
   block:
 
@@ -45,21 +55,23 @@
 - pause:
     minutes: 1
 
-- name: Create or Update Origin Pool shared-services-oidc
+
+- name: Create or Update Origin Pool shared-services
   block:
 
-    - name: GET Origin Pool shared-services-oidc
+    - name: GET Origin Pool shared-services
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/shared-services-oidc"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/shared-services-{{ item.name }}"
         method: GET
         headers:
           Content-Type: application/json
           Authorization: "APIToken {{ extra_volterra.token }}"
         status_code: 200, 404
         validate_certs: no
+      loop: "{{ nginx_services }}"
       register: var_register
 
-    - name: CREATE Origin Pool shared-services-oidc
+    - name: CREATE Origin Pool shared-services
       uri:
         url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools"
         method: POST
@@ -70,11 +82,14 @@
         body_format: json
         status_code: 200
         validate_certs: no
-      when: var_register.status == 404
+      loop: "{{ nginx_services }}"
+      loop_control:
+        index_var: cur_index
+      when: var_register.results[cur_index].status == 404
 
-    - name: UPDATE Origin Pool shared-services-oidc
+    - name: UPDATE Origin Pool shared-services
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/shared-services-oidc"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/shared-services-{{ item.name }}"
         method: PUT
         headers:
           Content-Type: application/json
@@ -83,7 +98,10 @@
         body_format: json
         status_code: 200
         validate_certs: no
-      when: var_register.status == 200
+      loop: "{{ nginx_services }}"
+      loop_control:
+        index_var: cur_index
+      when: var_register.results[cur_index].status == 200
 
 
 - name: Create or Update HTTP LB Public
@@ -167,18 +185,20 @@
         validate_certs: no
       when: var_register.status == 200
 
+
 - name: Create or Update Origin Pool csp-origin-server
   block:
 
     - name: GET Origin Pool csp-origin-server
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/{{ extra_namespace_app }}-origin"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/{{ extra_namespace_app }}-origin-{{ item.origin_app }}"
         method: GET
         headers:
           Content-Type: application/json
           Authorization: "APIToken {{ extra_volterra.token }}"
         status_code: 200, 404
         validate_certs: no
+      loop: "{{ nginx_services }}"
       register: var_register
 
     - name: CREATE Origin Pool csp-origin-server
@@ -192,11 +212,14 @@
         body_format: json
         status_code: 200
         validate_certs: no
-      when: var_register.status == 404
+      loop: "{{ nginx_services }}"
+      loop_control:
+        index_var: cur_index
+      when: var_register.results[cur_index].status == 404
 
     - name: UPDATE Origin Pool csp-origin-server
       uri:
-        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/{{ extra_namespace_app }}-origin"
+        url: "https://{{ extra_volterra.tenant.short }}.console.ves.volterra.io/api/config/namespaces/{{ extra_volterra_namespace }}/origin_pools/{{ extra_namespace_app }}-origin-{{ item.origin_app }}"
         method: PUT
         headers:
           Content-Type: application/json
@@ -205,7 +228,10 @@
         body_format: json
         status_code: 200
         validate_certs: no
-      when: var_register.status == 200
+      loop: "{{ nginx_services }}"
+      loop_control:
+        index_var: cur_index
+      when: var_register.results[cur_index].status == 200
 
 
 - name: Create or Update HTTP LB origin
@@ -247,5 +273,6 @@
         status_code: 200
         validate_certs: no
       when: var_register.status == 200
+
 
 

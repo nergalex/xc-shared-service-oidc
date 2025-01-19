@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "shared-services-oidc",
+    "name": "shared-services-{{ item.name }}",
     "namespace": "{{ extra_volterra_namespace }}",
     "labels": {
       "owner": "{{ extra_owner_email.split('@')[0] }}",
@@ -13,12 +13,12 @@
     "origin_servers": [
       {
         "k8s_service": {
-          "service_name": "nginx-oidc-gw.{{ extra_namespace_shared_services }}",
+          "service_name": "nginx-secure-access.{{ extra_namespace_shared_services }}",
           "site_locator": {
             "virtual_site": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "shared-service-oidc-gw"
+              "name": "shared-services-secure-access"
             }
           },
           "vk8s_networks": {}
@@ -27,13 +27,13 @@
       }
     ],
     "no_tls": {},
-    "port": 8000,
-    "same_as_endpoint_port": {},
+    "port": {{ item.port }},
+    "health_check_port": 8081,
     "healthcheck": [
       {
         "tenant": "{{ extra_volterra.tenant.full }}",
         "namespace": "shared",
-        "name": "shared-services-oidc",
+        "name": "shared-services-secure-access",
         "kind": "healthcheck"
       }
     ],

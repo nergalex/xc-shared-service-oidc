@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "{{ extra_namespace_app }}-origin",
+    "name": "{{ extra_namespace_app }}-origin-{{ item.origin_app }}",
     "namespace": "{{ extra_volterra_namespace }}",
     "labels": {
       "owner": "{{ extra_owner_email.split('@')[0] }}",

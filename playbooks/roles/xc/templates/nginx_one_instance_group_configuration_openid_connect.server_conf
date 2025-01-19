@@ -85,11 +85,5 @@
         return 500 $internal_error_message;
     }
 
-    location /api/ {
-        api write=on;
-        allow 127.0.0.1; # Only the NGINX host may call the NGINX Plus API
-        deny all;
-        access_log off;
-    }
 
 # vim: syntax=nginx

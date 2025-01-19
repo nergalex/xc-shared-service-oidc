@@ -6,12 +6,12 @@ metadata:
     owner: "{{ extra_owner_email.split('@')[0] }}"
     project: "cloudbuilder"
   annotations:
-    ves.io/app: nginx-oidc-gw
-    ves.io/virtual-sites: shared/shared-service-oidc-gw
-    ves.io/workload-flavor: nginx-oidc-gw
+    ves.io/app: nginx-secure-access
+    ves.io/virtual-sites: shared/shared-services-secure-access
+    ves.io/workload-flavor: nginx-secure-access
 spec:
   selector:
-    ves.io/workload: nginx-oidc-gw
+    ves.io/workload: nginx-secure-access
   clusterIP: None
   type: ClusterIP
   ipFamilies:

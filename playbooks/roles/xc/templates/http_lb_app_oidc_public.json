@@ -33,12 +33,83 @@
           "path": {
             "prefix": "/"
           },
+          "headers": [
+            {
+              "name": "Authorization",
+              "presence": true,
+              "invert_match": false
+            }
+          ],
           "origin_pools": [
               {
                 "pool": {
                   "tenant": "{{ extra_volterra.tenant.full }}",
                   "namespace": "{{ extra_volterra_namespace }}",
-                  "name": "shared-services-oidc"
+                  "name": "shared-services-jwt-validation-gw"
+                },
+                "weight": 1,
+                "priority": 1,
+                "endpoint_subsets": {}
+              }
+          ],
+          "disable_host_rewrite": {},
+          "advanced_options": {
+            "common_hash_policy": {},
+            "priority": "DEFAULT",
+            "endpoint_subsets": {},
+            "disable_prefix_rewrite": {},
+            "request_headers_to_add": [
+              {
+                "name": "x-my-idp",
+                "value": "{{ extra_my_idp }}",
+                "append": false
+              },
+              {
+                "name": "x-my-scope",
+                "value": "{{ extra_my_scope }}",
+                "append": false
+              }
+            ],
+            "request_headers_to_remove": [],
+            "response_headers_to_add": [],
+            "response_headers_to_remove": [],
+            "disable_location_add": false,
+            "inherited_waf": {},
+            "disable_spdy": {},
+            "disable_web_socket_config": {},
+            "retry_policy": {
+              "retry_condition": [
+                "connect-failure",
+                "reset",
+                "5xx"
+              ],
+              "num_retries": 1,
+              "per_try_timeout": 0,
+              "back_off": {
+                "base_interval": 25,
+                "max_interval": 0
+              }
+            },
+            "timeout": 30000,
+            "common_buffering": {},
+            "disable_mirroring": {},
+            "retract_cluster": {},
+            "inherited_bot_defense_javascript_injection": {}
+          }
+        }
+      },
+      {
+        "simple_route": {
+          "http_method": "ANY",
+          "path": {
+            "prefix": "/"
+          },
+          "origin_pools": [
+              {
+                "pool": {
+                  "tenant": "{{ extra_volterra.tenant.full }}",
+                  "namespace": "{{ extra_volterra_namespace }}",
+                  "name": "shared-services-oidc-gw"
                 },
                 "weight": 1,
                 "priority": 1,
@@ -70,6 +141,11 @@
               {
                 "name": "x-my-scope",
                 "value": "{{ extra_my_scope }}",
+                "append": false
+              },
+              {
+                "name": "x-my-client-id",
+                "value": "{{ extra_my_client_id }}",
                 "append": false
               }
             ],

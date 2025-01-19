@@ -27,7 +27,7 @@
             "virtual_site": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "shared-service-oidc-gw",
+              "name": "shared-services-secure-access",
               "kind": "virtual_site"
             }
           },
@@ -40,7 +40,7 @@
             "virtual_site": {
               "tenant": "{{ extra_volterra.tenant.full }}",
               "namespace": "shared",
-              "name": "shared-service-oidc-gw",
+              "name": "shared-services-secure-access",
               "kind": "virtual_site"
             }
           },
@@ -61,6 +61,11 @@
               "name": "Host",
               "exact": "{{ extra_namespace_app }}.{{ extra_app.domain }}",
               "invert_match": false
+            },
+            {
+              "name": "x-oauth-flow",
+              "exact": "client-credential-or-implicit",
+              "invert_match": false
             }
           ],
           "incoming_port": {
@@ -71,7 +76,74 @@
               "pool": {
                 "tenant": "{{ extra_volterra.tenant.full }}",
                 "namespace": "{{ extra_volterra_namespace }}",
-                "name": "{{ extra_namespace_app }}-origin",
+                "name": "{{ extra_namespace_app }}-origin-backend",
+                "kind": "origin_pool"
+              },
+              "weight": 1,
+              "priority": 1,
+              "endpoint_subsets": {}
+            }
+          ],
+          "disable_host_rewrite": {},
+          "advanced_options": {
+            "common_hash_policy": {},
+            "priority": "DEFAULT",
+            "endpoint_subsets": {},
+            "disable_prefix_rewrite": {},
+            "request_headers_to_add": [
+              {
+                "name": "X-Secret",
+                "secret_value": {
+                  "blindfold_secret_info": {
+                    "location": "string:///{{extra_shared_secret_blindfold}}"
+                  }
+                },
+                "append": false
+              }
+            ],
+            "request_headers_to_remove": [],
+            "response_headers_to_add": [],
+            "response_headers_to_remove": [],
+            "disable_location_add": false,
+            "inherited_waf": {},
+            "disable_spdy": {},
+            "disable_web_socket_config": {},
+            "default_retry_policy": {},
+            "timeout": 30000,
+            "common_buffering": {},
+            "disable_mirroring": {},
+            "retract_cluster": {},
+            "inherited_bot_defense_javascript_injection": {}
+          }
+        }
+      },
+      {
+        "simple_route": {
+          "http_method": "ANY",
+          "path": {
+            "prefix": "/"
+          },
+          "headers": [
+            {
+              "name": "Host",
+              "exact": "{{ extra_namespace_app }}.{{ extra_app.domain }}",
+              "invert_match": false
+            },
+            {
+              "name": "x-oauth-flow",
+              "exact": "oidc-user",
+              "invert_match": false
+            }
+          ],
+          "incoming_port": {
+            "no_port_match": {}
+          },
+          "origin_pools": [
+            {
+              "pool": {
+                "tenant": "{{ extra_volterra.tenant.full }}",
+                "namespace": "{{ extra_volterra_namespace }}",
+                "name": "{{ extra_namespace_app }}-origin-frontend",
                 "kind": "origin_pool"
               },
               "weight": 1,
@@ -137,12 +209,6 @@
     "disable_bot_defense": {},
     "disable_api_definition": {},
     "disable_ip_reputation": {},
-    "disable_client_side_defense": {},
-    "dns_info": [],
-    "state": "VIRTUAL_HOST_READY",
-    "auto_cert_info": {
-      "auto_cert_state": "AutoCertNotApplicable",
-      "dns_records": []
-    }
+    "disable_client_side_defense": {}
   }
 }

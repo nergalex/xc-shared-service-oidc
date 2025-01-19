@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "name": "shared-service-oidc-gw",
+    "name": "shared-services-secure-access",
     "namespace": "shared",
     "labels": {
       "owner": "{{ extra_owner_email.split('@')[0] }}",
