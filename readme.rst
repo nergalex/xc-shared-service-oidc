@@ -47,7 +47,6 @@ This flow is internally named ``oidc-user``
 HTTP LB "public"
 ------------------------------------
 When NO ``Authorization`` header is present in the request, the LB adds or replaces the request headers:
-
     - ``X-Forwarded-Proto: https``. Used by NGINX to build the redirect_uri during the Authorization code flow
     - ``X-Forwarded-Port: 443``. Used by NGINX to build the redirect_uri during the Authorization code flow
     - ``x-my-idp: <MyIdP>``. Used by NGINX to retrieve an IdP name already provisioned.
@@ -58,7 +57,6 @@ When NO ``Authorization`` header is present in the request, the LB adds or repla
 NGINX
 ------------------------------------
 NGINX *Secure Access* gateway adds or replaces the request headers after OIDC validation:
-
     - ``x-oauth-flow: oidc-user``
 
 HTTP LB "origin"
@@ -74,12 +72,11 @@ HTTP LB "public"
 ------------------------------------
 When an ``Authorization`` header is present in the request, the LB adds or replaces the request headers:
     - ``x-my-idp: <MyIdP>``. Used by NGINX to retrieve an IdP name already provisioned.
-    - ``x-my-scope: <MyScope>``. Used by NGINX to validate the claimed scope of the JWT. Multiple scope entry must be separated by a `` ``. For example ``openid profile email offline_access``. For nested ``scope`` claim or including a dot (“.”), separate values with a comma. For example ``openid,profile,email,offline_access``.
+    - ``x-my-scope: <MyScope>``. Used by NGINX to validate the claimed scope of the JWT. Multiple scope entry must be separated by a ``space``. For example ``openid profile email offline_access``. For nested ``scope`` claim or including a dot (“.”), separate values with a comma. For example ``openid,profile,email,offline_access``.
 
 NGINX
 ------------------------------------
 NGINX *Secure Access* gateway adds or replaces the request headers after JWT validation:
-
     - ``x-oauth-flow: client-credential-or-implicit``
 
 HTTP LB "origin"
