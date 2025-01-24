@@ -176,7 +176,7 @@ OIDC & Azure EntraID
 See bellow some configuration examples for the use of
 `auth code flow paired with Proof Key for Code Exchange (PKCE) and OpenID Connect (OIDC) <https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow#request-an-authorization-code>`_
 to get access tokens and ID tokens in these types of apps:
-    - Single Page Application (SPA)
+    - Single Page Application (SPA). Note, the SPA will send the ``Origin: https://<hostname>`` header to the IdP during Auth code flow
     - Standard (server-based) web application
     - Desktop and mobile apps
 
