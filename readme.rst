@@ -36,7 +36,7 @@ Pre-requisites
     - `onelogin <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/onelogin/>`_
     - `Ping Identity <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/ping-identity/>`_
 
-Understand the meaning of the headers set in the configuration
+Meaning of the headers set in the configuration
 *************************************************************
 XC LBs and NGINX are sharing information through headers listed below.
 
