@@ -36,6 +36,55 @@ Pre-requisites
     - `onelogin <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/onelogin/>`_
     - `Ping Identity <https://docs.nginx.com/nginx/deployment-guides/single-sign-on/ping-identity/>`_
 
+Understand the meaning of the headers set in the configuration
+*************************************************************
+XC LBs and NGINX are sharing information through headers listed below.
+
+Authorization code flow, PKCE or not
+====================================
+This flow is internally named ``oidc-user``
+HTTP LB "public"
+------------------------------------
+When NO ``Authorization`` header is present in the request, the LB adds or replaces the request headers:
+
+- ``X-Forwarded-Proto: https``. Used by NGINX to build the redirect_uri during the Authorization code flow
+- ``X-Forwarded-Port: 443``. Used by NGINX to build the redirect_uri during the Authorization code flow
+- ``x-my-idp: <MyIdP>``. Used by NGINX to retrieve an IdP name already provisioned.
+- ``x-my-scope: <MyScope>``. Used by NGINX to add the claimed scope during the Authorization code flow. At least, the value ``openid`` must be present, if not no ID Token will be received and an error occurs. Multiple scope entry must be separated by a ``+``. For example ``openid+profile+email+offline_access``
+- ``x-my-client-id: <MyAppID>``. Used by NGINX during the Authorization code flow and exchange.
+- ``x-my-client-secret: <MyAppID>``. Used by NGINX during the Authorization code exchange IF the IdP has been defined as not supporting PKCE.
+
+NGINX
+------------------------------------
+NGINX *Secure Access* gateway adds or replaces the request headers after OIDC validation:
+
+- ``x-oauth-flow: oidc-user``
+
+HTTP LB "origin"
+------------------------------------
+When ``x-oauth-flow: oidc-user`` is present in the request, the LB forwards the request as is to the frontend server (UI)
+
+
+JWT validation
+====================================
+This flow is named ``client-credential or implicit flow``
+HTTP LB "public"
+------------------------------------
+When an ``Authorization`` header is present in the request, the LB adds or replaces the request headers:
+    - ``x-my-idp: <MyIdP>``. Used by NGINX to retrieve an IdP name already provisioned.
+    - ``x-my-scope: <MyScope>``. Used by NGINX to validate the claimed scope of the JWT. Multiple scope entry must be separated by a `` ``. For example ``openid profile email offline_access``. For nested ``scope`` claim or including a dot (“.”), separate values with a comma. For example ``openid,profile,email,offline_access``.
+
+NGINX
+------------------------------------
+NGINX *Secure Access* gateway adds or replaces the request headers after JWT validation:
+
+- ``x-oauth-flow: client-credential-or-implicit``
+
+HTTP LB "origin"
+------------------------------------
+When ``x-oauth-flow: client-credential-or-implicit`` is present in the request, the LB forwards the request as is to the backend server (API)
+
+
 1. Shared Service "PaaS Secure Access"
 *****************************************
 
@@ -82,7 +131,6 @@ variable                                        Description
 
 2. Deploy an Application protected by "PaaS Secure Access"
 **********************************************************
-
 Ansible playbook: ``./playbooks/roles/xc/taskscreate_vk8s_nginx_oidc.yaml``
 
 ==============================================  =============================================
