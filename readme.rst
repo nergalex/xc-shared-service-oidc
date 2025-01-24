@@ -43,6 +43,7 @@ XC LBs and NGINX are sharing information through headers listed below.
 Authorization code flow, PKCE or not
 ====================================
 This flow is internally named ``oidc-user``
+
 HTTP LB "public"
 ------------------------------------
 When NO ``Authorization`` header is present in the request, the LB adds or replaces the request headers:
@@ -68,6 +69,7 @@ When ``x-oauth-flow: oidc-user`` is present in the request, the LB forwards the 
 JWT validation
 ====================================
 This flow is named ``client-credential or implicit flow``
+
 HTTP LB "public"
 ------------------------------------
 When an ``Authorization`` header is present in the request, the LB adds or replaces the request headers:
