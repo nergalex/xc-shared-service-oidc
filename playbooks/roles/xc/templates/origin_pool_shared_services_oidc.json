@@ -44,10 +44,10 @@
       "http_idle_timeout": 60000,
       "circuit_breaker": {
         "priority": "DEFAULT",
-        "connection_limit": 1024,
-        "pending_requests": 1024,
-        "retries": 100,
-        "max_requests": 1024
+        "connection_limit": 512,
+        "pending_requests": 512,
+        "retries": 3,
+        "max_requests": 512
       },
       "disable_outlier_detection": {},
       "no_panic_threshold": {},
