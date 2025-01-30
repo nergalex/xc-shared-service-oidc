@@ -80,6 +80,11 @@
                 "name": "x-my-scope",
                 "value": "{{ extra_my_scope }}",
                 "append": false
+              },
+              {
+                "name": "x-my-aud",
+                "value": "{{ extra_my_audience }}",
+                "append": false
               }
             ],
             "request_headers_to_remove": [],
